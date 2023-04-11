@@ -3,7 +3,10 @@
 ## 运行 docker 数据库
 
 ``` sh
-docker run -d --name pg-go-simple-accounts -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=simple_accounts_dev -e PGDATA=/var/lib/postgresql/data/pgdata -v pg-go-simple-accounts-data:/var/lib/postgresql/data postgres:14
+# postgres
+docker run -d --name pg-go-simple-accounts -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=simple_accounts_dev -e PGDATA=/var/lib/postgresql/data/pgdata -v pg-go-simple-accounts-data:/var/lib/postgresql/data postgres:14
+# mysql
+docker run -d --name mysql-go-simple-accounts -p 3306:3306 - -e MYSQL_DATABASE=simple_accounts_dev -e MYSQL_USER=jay -e MYSQL_PASSWORD=123456 -e MYSQL_ROOT_PASSWORD=123456 -v mysql-go-simple-accounts-data:/var/lib/mysql mysql:8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ```
 
 --name 容器名称。可以作为 ip 使用，需加 --network
@@ -17,6 +20,7 @@ docker run -d --name pg-go-simple-accounts -e POSTGRES_USER=admin -e POSTGRES_PA
 ## 进入数据库
 
 ``` sh
+# pgsql
 docker exec -it pg-go-simple-accounts bash # 进入 docker psql 数据库
 psql -U <user name> -d <database name> # 连接数据库
 \l # 查看全部数据库
@@ -24,4 +28,12 @@ psql -U <user name> -d <database name> # 连接数据库
 \d # 查看全部表
 \d <table name> # 查看表
 \q # 退出数据库，或者 control + d
+# mysql
+docker exec -it mysql-go-simple-accounts bash # 进入 docker mysql 数据库
+psql -u <user name> -p <database name> # 连接数据库
+show databases; # 查看全部数据库
+use <database name> # 连接数据库
+show tables; # 查看全部表
+describe <table name> # 查看表
+exit # 退出数据库，或者 control + d
 ```
