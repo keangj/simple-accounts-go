@@ -43,7 +43,31 @@ func CreateTables() {
 	}
 	log.Println("Successfully created users table")
 }
+func handleErr(err error) {
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+func Migrate() {
+	_, err := DB.Exec(`ALTER TABLE users ADD COLUMN phone VARCHAR(50)`)
+	handleErr(err)
+	log.Println("Successfully added password column to users table")
+	_, err = DB.Exec(`ALTER TABLE users ADD COLUMN address VARCHAR(200)`)
+	handleErr(err)
+	log.Println("Successfully added address column to users table")
+	_, err = DB.Exec(`
+    CREATE TABLE items (
+      id SERIAL PRIMARY KEY,
+      amount INTEGER NOT NULL,
+      happened_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
+	handleErr(err)
+	log.Println("Successfully created items table")
 
+}
 func Close() {
 	DB.Close()
 	log.Println("Successfully closed database connection")
