@@ -61,11 +61,15 @@ func Run() {
 			database.Migrate()
 		},
 	}
+	crudCmd := &cobra.Command{
+		Use: "crud",
+		Run: func(cmd *cobra.Command, args []string) {
+			database.Crud()
+		},
+	}
 	database.Connect()
-	rootCmd.AddCommand(srvCmd)
-	rootCmd.AddCommand(dbCmd)
-	dbCmd.AddCommand(createCmd)
-	dbCmd.AddCommand(mgrtCmd)
+	rootCmd.AddCommand(dbCmd, srvCmd)
+	dbCmd.AddCommand(createCmd, mgrtCmd, crudCmd)
 	defer database.Close()
 
 	if err := rootCmd.Execute(); err != nil {
