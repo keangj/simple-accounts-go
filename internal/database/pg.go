@@ -41,20 +41,15 @@ func CreateTables() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Successfully created users table")
 }
 func Migrate() {
 	_, err := DB.Exec(`ALTER TABLE users ADD COLUMN phone VARCHAR(50)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully added password column to users table")
 	}
 	_, err = DB.Exec(`ALTER TABLE users ADD COLUMN address VARCHAR(200)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully added address column to users table")
 	}
 	_, err = DB.Exec(`
     CREATE TABLE items (
@@ -67,44 +62,34 @@ func Migrate() {
   `)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully created items table")
 	}
 	_, err = DB.Exec(`ALTER TABLE items ALTER COLUMN happened_at TYPE TIMESTAMP`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully changed happened_at column type to TIMESTAMP")
 	}
 	// 为 users 的 email 字段添加唯一索引
 	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully added unique index to users table")
 	}
 }
 func Crud() {
 	// CREATE
 	_, err := DB.Exec(`INSERT INTO users (email) VALUES ('1@qq.com')`)
 	if err != nil {
-		switch err.(type) {
+		switch x := err.(type) {
 		case *pq.Error:
 			pqErr := err.(*pq.Error)
 			log.Println(pqErr.Code.Name())
 			log.Panicln(pqErr.Message)
 		default:
-			log.Println(err)
+			log.Println(x)
 		}
-	} else {
-		log.Println("Successfully created user")
 	}
 	// UPDATE
 	_, err = DB.Exec(`Update users SET phone = '13556551111' WHERE id = 1`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully updated user")
 	}
 	// READ
 	// result, err := DB.Query(`SELECT phone FROM users WHERE email = '1@qq.com'`)
@@ -122,7 +107,6 @@ func Crud() {
 			result.Scan(&phone)
 			log.Println("phone", phone)
 		}
-		log.Println("Successfully read a users")
 	}
 }
 func Close() {
