@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 const (
@@ -51,32 +49,24 @@ func Run() {
 		Use:   "db",
 		Short: "Run db",
 	}
-	lib1Cmd := &cobra.Command{
-		Use:   "sql",
-		Short: "use database/sql",
+	createCmd := &cobra.Command{
+		Use: "create",
 		Run: func(cmd *cobra.Command, args []string) {
-			database.Connect()
 			database.CreateTables()
-			defer database.Close()
 		},
 	}
-	lib2Cmd := &cobra.Command{
-		Use:   "gorm",
-		Short: "use gorm",
+	mgrtCmd := &cobra.Command{
+		Use: "migrate",
 		Run: func(cmd *cobra.Command, args []string) {
-			connectStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-			db, err := gorm.Open(postgres.Open(connectStr))
-			if err != nil {
-				log.Fatalln(err)
-			}
-			// db.Migrator().CreateTable(&User{}, &Items{}) // 创建表
-			db.AutoMigrate(&User{}, &Items{}) // 自动迁移
+			database.Migrate()
 		},
 	}
-	dbCmd.AddCommand(lib1Cmd)
-	dbCmd.AddCommand(lib2Cmd)
-	rootCmd.AddCommand(dbCmd)
+	database.Connect()
 	rootCmd.AddCommand(srvCmd)
+	rootCmd.AddCommand(dbCmd)
+	dbCmd.AddCommand(createCmd)
+	dbCmd.AddCommand(mgrtCmd)
+	defer database.Close()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

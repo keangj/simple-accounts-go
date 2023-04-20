@@ -45,7 +45,7 @@ func CreateTables() {
 }
 func handleErr(err error) {
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 }
 func Migrate() {
@@ -66,7 +66,9 @@ func Migrate() {
   `)
 	handleErr(err)
 	log.Println("Successfully created items table")
-
+	// _, err = DB.Exec(`ALTER TABLE items ALTER COLUMN happened_at TYPE TIMESTAMP`)
+	// handleErr(err)
+	// log.Println("Successfully changed happened_at column type to TIMESTAMP")
 }
 func Close() {
 	DB.Close()
