@@ -1,5 +1,10 @@
 package database
 
-import "database/sql"
+import (
+	"gorm.io/gorm"
+)
 
-var DB *sql.DB
+// sql package
+// var DB *sql.DB
+// gorm package
+var DB *gorm.DB

@@ -68,9 +68,9 @@ func Run() {
 		},
 	}
 	database.Connect()
+	defer database.Close()
 	rootCmd.AddCommand(dbCmd, srvCmd)
 	dbCmd.AddCommand(createCmd, mgrtCmd, crudCmd)
-	defer database.Close()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
