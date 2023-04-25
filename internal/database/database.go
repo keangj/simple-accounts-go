@@ -21,9 +21,19 @@ const (
 
 type User struct {
 	ID        int
-	Email     string
+	Email     string `gorm:"uniqueIndex"` // 使用 tag 设置唯一索引
+	Phone     int
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+type Items struct {
+	ID        int
+	TagId     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+type Tag struct {
+	ID int
 }
 
 func Connect() {
@@ -38,16 +48,23 @@ func Connect() {
 	DB = db
 }
 
+var models = []any{&User{}, &Items{}, &Tag{}}
+
 func CreateTables() {
-	u := User{Email: "6@qq.com"}
-	err := DB.Migrator().CreateTable(&u)
-	if err != nil {
-		log.Fatalln(err)
+	for _, model := range models {
+		err := DB.Migrator().CreateTable(model)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 	log.Println("Successfully created table")
 }
 func Migrate() {
-
+	err := DB.AutoMigrate(models...)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Successfully migrated table")
 }
 func Crud() {
 
