@@ -67,7 +67,35 @@ func Migrate() {
 	log.Println("Successfully migrated table")
 }
 func Crud() {
+	// Create
+	user := User{Email: "5@qq.com"}
+	tx := DB.Create(&user)
+	log.Println(tx.RowsAffected) // tx 是一个事务，可以获取事务的执行结果
+	log.Println(user)            // user 的值会变为新创建的值
 
+	// Read
+	// 获取多个
+	users := []User{}
+	// 查询所有的 users
+	// DB.Find(&users)
+	// 查询主键为 1,2,3 的 users
+	DB.Find(&users, []int{1, 2, 3})
+	// 查询前 10 个 users
+	// asc 升序 desc 降序
+	DB.Offset(0).Limit(10).Order("created_at asc, id desc").Find(&users)
+	log.Println(users)
+	// 获取一个
+	user = User{}
+	DB.Find(&user, 1) // 查询主键为 1 的 user
+	log.Println(user) // user 的值会变为查询的结果
+
+	// Update
+	user.Phone = 123456789
+	DB.Save(&user)
+	log.Println(user)
+
+	// Delete
+	// DB.Delete(&User{ID: 1})
 }
 func Close() {
 	sqlDB, err := DB.DB()
@@ -75,7 +103,6 @@ func Close() {
 		log.Fatalln(err)
 	}
 	sqlDB.Close()
-	log.Println("Successfully closed database connection")
 }
 
 // package database
