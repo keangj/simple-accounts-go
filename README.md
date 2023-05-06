@@ -37,3 +37,36 @@ show tables; # 查看全部表
 describe <table name> # 查看表
 exit # 退出数据库，或者 control + d
 ```
+
+## [sqlc](https://docs.sqlc.dev/)
+
+- 安装
+
+  ``` sh
+  # mac
+  brew install sqlc
+  ```
+
+### 用 [golang-migrate](https://github.com/golang-migrate/migrate) 数据迁移
+
+- 安装 golang-migrate
+
+  ``` sh
+  brew install golang-migrate
+  migrate --version # 4.x.x
+  ```
+
+- 创建迁移文件
+
+``` sh
+migrate create -ext sql -dir config/migrations -seq create_users_table
+```
+
+- 运行迁移文件
+
+``` sh
+# 升级
+migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" up
+# 降级
+migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" down 1
+```
