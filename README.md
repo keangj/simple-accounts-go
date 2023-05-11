@@ -59,6 +59,8 @@ exit # 退出数据库，或者 control + d
 - 创建迁移文件
 
 ``` sh
+go build; ./simple-accounts db create:migrations <filename>
+# or
 migrate create -ext sql -dir config/migrations -seq create_users_table
 ```
 
@@ -66,7 +68,11 @@ migrate create -ext sql -dir config/migrations -seq create_users_table
 
 ``` sh
 # 升级
+go build; ./simple-accounts db migrate
+# or
 migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" up
 # 降级
+go build; ./simple-accounts db migrate:down
+# or
 migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" down 1
 ```
