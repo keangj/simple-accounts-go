@@ -76,3 +76,12 @@ go build; ./simple-accounts db migrate:down
 # or
 migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" down 1
 ```
+
+## 数据库测试
+
+命令行执行
+
+``` sh
+go test ./test/...
+go test -benchmem -bench "Crud" ./test/database_test/...
+```

@@ -8,7 +8,9 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"simple-accounts/config/tutorial"
+	"strings"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -72,6 +74,11 @@ func CreateMigrate(filename string) {
 }
 func Migrate() {
 	dir, err := os.Getwd()
+	name := filepath.Base(dir)
+	for !strings.Contains(name, "simple-accounts-go") {
+		dir = filepath.Dir(dir)
+		name = filepath.Base(dir)
+	}
 	m, err := migrate.New(
 		fmt.Sprintf("file://%s/config/migrations", dir),
 		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", user, password, host, port, dbname),
@@ -82,7 +89,9 @@ func Migrate() {
 	// m.Steps(1) // 迁移一步
 	err = m.Up() // 迁移所有
 	if err != nil {
-		log.Fatalln(err)
+		if !strings.Contains(err.Error(), "no change") {
+			log.Fatalln(err)
+		}
 	}
 }
 
