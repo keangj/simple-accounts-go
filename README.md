@@ -39,7 +39,7 @@ exit # 退出数据库，或者 control + d
 ```
 
 ## [sqlc](https://docs.sqlc.dev/)
-
+ 
 - 安装
 
   ``` sh

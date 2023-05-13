@@ -1,11 +1,14 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
+	"simple-accounts/config/tutorial"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -14,6 +17,7 @@ import (
 )
 
 var DB *sql.DB
+var DBCtx = context.Background()
 
 const (
 	host     = "localhost"
@@ -41,9 +45,17 @@ type Tag struct {
 }
 
 func Connect() {
-	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	host, port, user, password, dbname)
-
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	DB = db
+	err = DB.Ping()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 var models = []any{&User{}, &Items{}, &Tag{}}
@@ -91,7 +103,40 @@ func MigrateDown() {
 }
 
 func Crud() {
-
+	// Create
+	t := tutorial.New(DB)
+	id := rand.Int()
+	u, err := t.CreateUser(DBCtx, fmt.Sprintf("%d@qq.com", id))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(u)
+	// Update
+	t.UpdateUser(DBCtx, tutorial.UpdateUserParams{
+		ID:      u.ID,
+		Email:   u.Email,
+		Phone:   u.Phone,
+		Address: "北京",
+	})
+	// Read
+	users, err := t.ListUsers(DBCtx, tutorial.ListUsersParams{
+		Offset: 0,
+		Limit:  10,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(users)
+	u, err = t.GetUser(DBCtx, users[0].ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(u)
+	// Delete
+	err = t.DeleteUser(DBCtx, u.ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 func Close() {
 
