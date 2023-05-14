@@ -86,7 +86,7 @@ go test ./test/...
 go test -benchmem -bench "Crud" ./test/database_test/...
 ```
 
-## 生成文档
+## 生成 API 文档
 
 安装 swag
 

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"simple-accounts/internal/database"
+	"simple-accounts/internal/email"
 	"simple-accounts/internal/router"
 	"time"
 
@@ -45,6 +46,7 @@ func Run() {
 			RunServer()
 		},
 	}
+
 	dbCmd := &cobra.Command{
 		Use:   "db",
 		Short: "Run db",
@@ -79,9 +81,17 @@ func Run() {
 			database.Crud()
 		},
 	}
+
+	emailCmd := &cobra.Command{
+		Use: "email",
+		Run: func(cmd *cobra.Command, args []string) {
+			email.Send()
+		},
+	}
+
 	database.Connect()
 	defer database.Close()
-	rootCmd.AddCommand(dbCmd, srvCmd)
+	rootCmd.AddCommand(dbCmd, srvCmd, emailCmd)
 	dbCmd.AddCommand(createCmd, createMigrationsCmd, mgrtCmd, mgrtDownCmd, crudCmd)
 
 	if err := rootCmd.Execute(); err != nil {
