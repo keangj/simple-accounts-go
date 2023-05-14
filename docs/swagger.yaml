@@ -1,0 +1,35 @@
+basePath: /api/v1
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: keangjay@gmail.com
+    name: Jay
+    url: "null"
+  description: This is a sample server for Simple Accounts API.
+  title: Simple Accounts API
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: test ping pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: ping pong
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

@@ -85,3 +85,19 @@ migrate -database "postgres://admin:123456@localhost:5432/simple_accounts_dev?ss
 go test ./test/...
 go test -benchmem -bench "Crud" ./test/database_test/...
 ```
+
+## 生成文档
+
+安装 swag
+
+``` sh
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
+生成文档
+
+``` sh
+./script/run.sh # 需要执行权限，chmod +x ./script/run.sh
+# or
+swag init && go build main.go && ./simple-accounts server
+```
