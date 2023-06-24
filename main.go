@@ -1,10 +1,8 @@
 package main
 
 import (
-	"log"
 	"simple-accounts/cmd"
-
-	"github.com/spf13/viper"
+	"simple-accounts/config"
 )
 
 // @title           Simple Accounts API
@@ -24,12 +22,6 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
 func main() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("json")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	config.LoadAddConfig()
 	cmd.Run()
 }
