@@ -3,6 +3,8 @@ package controller
 import (
 	"log"
 	"net/http"
+	"simple-accounts/config/tutorial"
+	"simple-accounts/internal/database"
 	"simple-accounts/internal/email"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +28,16 @@ func CreateValidationCode(c *gin.Context) {
 		c.String(400, "error")
 		return
 	}
-	if err := email.SendValidateCode(body.Email, "666666"); err != nil {
+	q := database.NewQuery()
+	vc, err := q.CreateValidationCode(c, tutorial.CreateValidationCodeParams{
+		Email: body.Email,
+		Code:  "666666",
+	})
+	if err != nil {
+		c.Status(400)
+		return
+	}
+	if err := email.SendValidateCode(vc.Email, vc.Code); err != nil {
 		log.Println(err)
 		c.String(500, "send error")
 		return

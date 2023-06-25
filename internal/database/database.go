@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"simple-accounts/config/tutorial"
 	"strings"
-	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -29,23 +28,6 @@ const (
 	dbname   = "simple_accounts_dev"
 )
 
-type User struct {
-	ID        int
-	Email     string `gorm:"uniqueIndex"` // 使用 tag 设置唯一索引
-	Phone     int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-type Items struct {
-	ID        int
-	TagId     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-type Tag struct {
-	ID int
-}
-
 func Connect() {
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -60,7 +42,9 @@ func Connect() {
 	}
 }
 
-var models = []any{&User{}, &Items{}, &Tag{}}
+func NewQuery() *tutorial.Queries {
+	return tutorial.New(DB)
+}
 
 func CreateTables() {
 

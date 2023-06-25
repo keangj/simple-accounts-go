@@ -1,11 +1,13 @@
 package controller_test
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"simple-accounts/config"
+	"simple-accounts/internal/database"
 	"simple-accounts/internal/router"
 	"strings"
 	"testing"
@@ -14,23 +16,22 @@ import (
 )
 
 func TestCreateValidationCode(t *testing.T) {
-	config.LoadAddConfig()
-	log.Println("test ----------")
-	pwd, _ := os.Getwd()
-	log.Println(pwd)
+	email := "keangjay@gmail.com"
 	// Setup
 	r := router.New()
 	// Assertions
 	w := httptest.NewRecorder()
+
+	q := database.NewQuery()
+	count1, _ := q.CountValidationCode(context.Background(), email)
 	req, _ := http.NewRequest(
 		"POST",
 		"/api/v1/validation_codes",
-		strings.NewReader(`{"email":"keangj@outlook.com"}`),
+		strings.NewReader(`{"email":"`+email+`"}`),
 	)
 	req.Header.Set("Content-Type", "application/json")
 	r.ServeHTTP(w, req)
-	// fmt.Println(w.Body.String(), w.Code)
-	// log.Fatalln(w.Body.String(), w.Code)
+	count2, _ := q.CountValidationCode(context.Background(), email)
+	assert.Equal(t, count2-1, count1)
 	assert.Equal(t, 200, w.Code)
-	// assert.Equal(t, "pong", w.Body.String())
 }
