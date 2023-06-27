@@ -2,11 +2,8 @@ package controller_test
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"simple-accounts/config"
 	"simple-accounts/internal/database"
 	"simple-accounts/internal/router"
 	"strings"

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"crypto/rand"
 	"log"
 	"net/http"
 	"simple-accounts/config/tutorial"
@@ -9,6 +10,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type Body struct {
+	Email string `json:"email" binding:"required,email"`
+}
 
 // Ping godoc
 // @Summary      ping pong
@@ -21,17 +26,21 @@ import (
 // @Failure      500
 // @Router       /ping [get]
 func CreateValidationCode(c *gin.Context) {
-	var body struct {
-		Email string `json:"email" binding:"required,email"`
-	}
+	var body Body
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.String(400, "error")
+		return
+	}
+	str, err := generateDigits()
+	if err != nil {
+		log.Println("[generateDigits fail]", err)
+		c.String(500, "生成验证码失败")
 		return
 	}
 	q := database.NewQuery()
 	vc, err := q.CreateValidationCode(c, tutorial.CreateValidationCodeParams{
 		Email: body.Email,
-		Code:  "666666",
+		Code:  str,
 	})
 	if err != nil {
 		c.Status(400)
@@ -44,4 +53,18 @@ func CreateValidationCode(c *gin.Context) {
 	}
 	log.Println(body.Email)
 	c.Status(http.StatusOK)
+}
+
+func generateDigits() (string, error) {
+	len := 4
+	b := make([]byte, len)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	digits := make([]byte, len)
+	for i := range b {
+		digits[i] = b[i]%10 + 48
+	}
+	return string(digits), nil
 }
