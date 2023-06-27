@@ -101,3 +101,14 @@ go install github.com/swaggo/swag/cmd/swag@latest
 # or
 swag init && go build main.go && ./simple-accounts server
 ```
+
+## 邮件测试
+
+``` sh
+# 安装 mailhog
+go install github.com/mailhog/MailHog@latest
+# 打开服务
+MailHog
+```
+
+打开 `http://localhost:8025/` 访问 UI
