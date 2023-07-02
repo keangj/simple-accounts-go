@@ -2,7 +2,6 @@ package controller_test
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"simple-accounts/internal/router"
@@ -20,7 +19,7 @@ func TestPing(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/api/v1/ping", nil)
 	r.ServeHTTP(w, req)
 	fmt.Println(w.Body.String(), w.Code)
-	log.Fatalln(w.Body.String(), w.Code)
+	// log.Fatalln(w.Body.String(), w.Code)
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, "pong", w.Body.String())
 }
