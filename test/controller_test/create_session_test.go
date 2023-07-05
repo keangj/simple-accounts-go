@@ -3,6 +3,7 @@ package controller_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -48,5 +49,6 @@ func TestCreateSession(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &responseBody); err != nil {
 		t.Error(err)
 	}
+	fmt.Println(w.Body.String())
 	assert.Equal(t, 200, w.Code)
 }

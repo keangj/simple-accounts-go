@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"simple-accounts/config/tutorial"
 	"simple-accounts/internal/database"
+	"simple-accounts/internal/jwt_helper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +28,13 @@ func CreateSession(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	JWTToken := "jwt"
+	JWTToken, err := jwt_helper.GenerateJWT(1)
+	if err != nil {
+		log.Println(err)
+		c.String(http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	// responseBody 简化为 gin.H{"JWT": JWTToken}
 	// responseBody := struct {
 	// 	JWT string `json:"jwt"`
 	// }{
