@@ -4,27 +4,35 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"io/ioutil"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 )
 
 func GenerateJWT(user_id int) (string, error) {
-	// Create a new token object, specifying signing method and the claims
-	// you would like it to contain.
+	// 创建一个新的 token 对象，指定签名算法和 claims
+	// jwt.SigningMethodHS256 是指 HMAC-SHA256 算法
+	// jwt.MapClaims 是指标准的 payload 数据
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user_id,
 	})
-
-	key, err := generateHMACKey()
+	// 生成 HMAC key
+	key, err := getHMACKey()
 	if err != nil {
 		return "", err
 	}
 
-	// Sign and get the complete encoded token as a string using the secret
+	// 使用 HMAC key 签名 token
 	return token.SignedString(key)
 }
 
-func generateHMACKey() ([]byte, error) {
+func getHMACKey() ([]byte, error) {
+	keyPath := viper.GetString("jwt.hmac.key_path") // 从配置文件中读取 key_path
+	fmt.Println(ioutil.ReadFile(keyPath))
+	return ioutil.ReadFile(keyPath) // 从文件中读取 HMAC key
+}
+func GenerateHMACKey() ([]byte, error) {
 	// 生成 HMAC key
 	// key 是一个 64 字节的随机字节序列
 	key := make([]byte, 64)

@@ -2,14 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"simple-accounts/internal/database"
 	"simple-accounts/internal/email"
+	"simple-accounts/internal/jwt_helper"
 	"simple-accounts/internal/router"
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -89,9 +93,28 @@ func Run() {
 		},
 	}
 
+	generateHMACKeyCmd := &cobra.Command{
+		Use: "generateHMACKey",
+		Run: func(cmd *cobra.Command, args []string) {
+			// 生成 HMAC key
+			bytes, _ := jwt_helper.GenerateHMACKey()
+			// 保存到文件
+			keyPath := viper.GetString("jwt.hmac.key_path") // 从配置文件中读取 key_path
+			dir := filepath.Dir(keyPath)                    // 获取 key_path 的目录
+			// 如果目录不存在，则创建目录
+			if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+				log.Fatalln(err)
+			}
+			// 将 HMAC key 写入文件
+			if err := ioutil.WriteFile(keyPath, bytes, 0644); err != nil {
+				log.Fatalln(err)
+			}
+			fmt.Println("HMAC key generated to " + keyPath)
+		},
+	}
 	database.Connect()
 	defer database.Close()
-	rootCmd.AddCommand(dbCmd, srvCmd, emailCmd)
+	rootCmd.AddCommand(dbCmd, srvCmd, emailCmd, generateHMACKeyCmd)
 	dbCmd.AddCommand(createCmd, createMigrationsCmd, mgrtCmd, mgrtDownCmd, crudCmd)
 
 	if err := rootCmd.Execute(); err != nil {
