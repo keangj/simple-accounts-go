@@ -29,8 +29,7 @@ func GenerateJWT(user_id int) (string, error) {
 
 func getHMACKey() ([]byte, error) {
 	keyPath := viper.GetString("jwt.hmac.key_path") // 从配置文件中读取 key_path
-	fmt.Println(ioutil.ReadFile(keyPath))
-	return ioutil.ReadFile(keyPath) // 从文件中读取 HMAC key
+	return ioutil.ReadFile(keyPath)                 // 从文件中读取 HMAC key
 }
 func GenerateHMACKey() ([]byte, error) {
 	// 生成 HMAC key

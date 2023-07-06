@@ -16,10 +16,9 @@ func TestPing(t *testing.T) {
 
 	// Assertions
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/ping", nil)
+	req, _ := http.NewRequest("GET", "/ping", nil)
 	r.ServeHTTP(w, req)
 	fmt.Println(w.Body.String(), w.Code)
-	// log.Fatalln(w.Body.String(), w.Code)
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, "pong", w.Body.String())
 }
