@@ -1,4 +1,9 @@
 {
+  "jwt": {
+    "hmac": {
+      "key_path": "/Users/jay/.simple/jwt/hmac.key"
+    }
+  },
   "email": {
     "smtp": {
       "host": "smtp.qq.com",
