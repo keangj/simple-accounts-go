@@ -35,3 +35,6 @@ UPDATE users SET
   address = $3
 WHERE
   id = $4;
+
+-- name: DeleteAllUsers :exec
+DELETE FROM users;
